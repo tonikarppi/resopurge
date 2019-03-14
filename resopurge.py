@@ -17,12 +17,13 @@ MIN_HEIGHT = 1080
 
 def get_files_recursively(root_path):
     files_in_paths = [(root, files) for root, dirs, files in os.walk(root_path)]
-    return [
-        f"{path}/{file}"
-        for path, files in files_in_paths
-        for file in files
-        if file.lower().endswith((".png", ".jpg"))
-    ]
+    return [f"{path}/{file}" for path, files in files_in_paths for file in files]
+
+
+def file_has_extension(file, *extensions):
+    has_dot = "." in file
+    file_extension = file.rsplit(".", maxsplit=1)[-1]
+    return has_dot and file_extension in extensions
 
 
 def image_smaller_than(image_path, width, height):
@@ -36,7 +37,8 @@ def delete_files(files):
 
 
 def main():
-    image_files = get_files_recursively(IMAGES_PATH)
+    files = get_files_recursively(IMAGES_PATH)
+    image_files = [file for file in files if file_has_extension(file, "jpg", "png")]
     small_images = [
         image
         for image in image_files
