@@ -6,6 +6,9 @@ the specified values.
 import os
 from getpass import getuser
 from PIL import Image
+from os.path import join
+from pathlib import Path
+
 
 # The path to your images.
 IMAGES_PATH = f"/home/{getuser()}/Pictures/wallpapers"
@@ -16,14 +19,14 @@ MIN_HEIGHT = 1080
 
 
 def get_files_recursively(root_path):
-    files_in_paths = ((root, files) for root, dirs, files in os.walk(root_path))
-    return (f"{path}/{file}" for path, files in files_in_paths for file in files)
+    for current_path, dir_names, file_names in os.walk(root_path):
+        for file_name in file_names:
+            yield join(current_path, file_name)
 
 
-def file_has_extension(file, *extensions):
-    has_dot = "." in file
-    file_extension = file.rsplit(".", maxsplit=1)[-1]
-    return has_dot and file_extension in extensions
+def file_has_extension(file_path, *extensions):
+    path = Path(file_path)
+    return path.suffix.lower() in extensions
 
 
 def image_smaller_than(image_path, width, height):
@@ -38,7 +41,7 @@ def delete_files(files):
 
 def main():
     files = get_files_recursively(IMAGES_PATH)
-    image_files = (file for file in files if file_has_extension(file, "jpg", "png"))
+    image_files = (file for file in files if file_has_extension(file, ".jpg", ".png"))
     small_images = [
         image
         for image in image_files
