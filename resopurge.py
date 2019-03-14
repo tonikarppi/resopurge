@@ -5,10 +5,10 @@ the specified values.
 
 import os
 from getpass import getuser
-from PIL import Image
 from os.path import join
 from pathlib import Path
 
+from PIL import Image
 
 # The path to your images.
 IMAGES_PATH = f"/home/{getuser()}/Pictures/wallpapers"
